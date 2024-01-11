@@ -1,7 +1,9 @@
 import 'dart:developer';
 
-import 'package:exhibition_data_collection/screen/user_detail_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../services/firebase_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,25 +27,47 @@ class _HomeScreenState extends State<HomeScreen> {
     TabList(name: 'tab 4', isSelected: false, answer: 'ans 4'),
   ];
   final TextEditingController _otherFieldController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _contactNoController = TextEditingController();
+  final TextEditingController _designationController = TextEditingController();
+  final TextEditingController _companyController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: InkWell(
-        onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 50),
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
+              _buildUserDetailForm(context),
+              _buildTabs(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabs(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        title: const Text('Exhibition Form'),
+        children: [
+          Column(
+            children: [
               SizedBox(
-                height: MediaQuery.sizeOf(context).height / 1.8,
+                height: MediaQuery.sizeOf(context).height / 8,
                 child: GridView.builder(
-                  physics: const BouncingScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: _tabList.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
+                    crossAxisCount: 10,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 2,
                   ),
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
@@ -60,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(20),
                           color: _tabList[index].isSelected
                               ? Colors.green
-                              : Colors.red,
+                              : Colors.grey,
                         ),
                         child: Center(
                           child: Text(
@@ -74,73 +98,160 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: MediaQuery.sizeOf(context).height / 50),
-              InkWell(
-                onTap: () {
-                  setState(() {});
-                  _isOtherTabSelected = !_isOtherTabSelected;
-                },
-                child: Container(
-                  height: MediaQuery.sizeOf(context).height / 15,
-                  width: MediaQuery.sizeOf(context).width / 1.5,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: _isOtherTabSelected ? Colors.green : Colors.red,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Other',
-                      style: TextStyle(color: Colors.white),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {});
+                      _isOtherTabSelected = !_isOtherTabSelected;
+                    },
+                    child: Expanded(
+                      child: Container(
+                        height: MediaQuery.sizeOf(context).height / 11,
+                        width: MediaQuery.sizeOf(context).width / 4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color:
+                              _isOtherTabSelected ? Colors.green : Colors.grey,
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Other',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+                  _isOtherTabSelected
+                      ? Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Other Field',
+                              border: OutlineInputBorder(),
+                            ),
+                            controller: _otherFieldController,
+                          ),
+                        )
+                      : const SizedBox(),
+                ],
               ),
-              SizedBox(height: MediaQuery.sizeOf(context).height / 50),
-              _isOtherTabSelected
-                  ? TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Other Field',
-                        border: OutlineInputBorder(),
-                      ),
-                      controller: _otherFieldController,
-                    )
-                  : const SizedBox(),
-              SizedBox(height: MediaQuery.sizeOf(context).height / 7),
+              SizedBox(height: MediaQuery.sizeOf(context).height / 10),
+              _buildSubmitButton(context),
             ],
           ),
-        ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        padding: const EdgeInsets.only(bottom: 25),
-        width: MediaQuery.sizeOf(context).width / 2,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-          onPressed: () {
-            //TODO submit data on server or any storage
-            var data = _submitUserSelectedData();
-            log('data List ${data.toString()}');
-          },
-          child: const Text(
-            'Submit',
-            style: TextStyle(color: Colors.white),
+    );
+  }
+
+  Widget _buildUserDetailForm(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        title: const Text('User Detail'),
+        children: [
+          Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      autofocus: true,
+                      textInputAction: TextInputAction.next,
+                      controller: _nameController,
+                      keyboardType: TextInputType.name,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter name ',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      controller: _contactNoController,
+                      // maxLength: 10,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: const InputDecoration(
+                        hintText: 'Enter Phone Number ',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.name,
+                      controller: _designationController,
+                      decoration: const InputDecoration(
+                        hintText: 'Designation',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+                  Expanded(
+                    child: TextField(
+                      controller: _companyController,
+                      keyboardType: TextInputType.name,
+                      decoration: const InputDecoration(
+                        hintText: 'Company',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+            ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 25),
+      width: MediaQuery.sizeOf(context).width / 4,
+      height: MediaQuery.sizeOf(context).height / 9,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+        onPressed: () {
+          Map<String, dynamic> data = _submitUserSelectedData();
+          FirebaseServices().submitExhibitionForm(tabCapturedData: data);
+          log('data List ${data.toString()}');
+        },
+        child: const Text(
+          'Submit',
+          style: TextStyle(color: Colors.white),
         ),
       ),
     );
   }
 
-  List<String> _submitUserSelectedData() {
-    List<String> dataList = [];
+  Map<String, dynamic> _submitUserSelectedData() {
+    Map<String, dynamic> dataList = {};
     for (int i = 0; i < _tabList.length; i++) {
       if (_tabList[i].isSelected) {
-        dataList.add(_tabList[i].answer);
+        dataList[_tabList[i].name] = _tabList[i].answer;
       }
     }
 
     if (_otherFieldController.text.isNotEmpty &&
         _otherFieldController.text != null &&
         _isOtherTabSelected) {
-      dataList.add(_otherFieldController.text);
+      dataList['other'] = _otherFieldController.text;
     }
     if (dataList.length < 3) {
       showDialog(
@@ -153,15 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           });
-    } else {
-      // TODO Navigation
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const UserDetailScreen(),
-        ),
-      );
-    }
+    } else {}
     return dataList;
   }
 }
