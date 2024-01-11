@@ -12,10 +12,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isOtherTabSelected = false;
   final List<TabList> _tabList = [
-    TabList(name: 'tab 1', isSelected: false),
-    TabList(name: 'tab 2', isSelected: false),
-    TabList(name: 'tab 3', isSelected: false),
-    TabList(name: 'tab 4', isSelected: false),
+    TabList(name: 'tab 1', isSelected: false, answer: 'ans 1'),
+    TabList(name: 'tab 2', isSelected: false, answer: 'ans 2'),
+    TabList(name: 'tab 3', isSelected: false, answer: 'ans 3'),
+    TabList(name: 'tab 4', isSelected: false, answer: 'ans 4'),
   ];
   final TextEditingController _otherFieldController = TextEditingController();
 
@@ -77,7 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       _isOtherTabSelected = !_isOtherTabSelected;
                     },
                     child: Container(
-                      height: MediaQuery.sizeOf(context).height / 10,
+                      height: MediaQuery.sizeOf(context).height / 15,
+                      width: MediaQuery.sizeOf(context).width / 1.5,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: _isOtherTabSelected ? Colors.green : Colors.red,
@@ -92,12 +93,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: MediaQuery.sizeOf(context).height / 100),
                   _isOtherTabSelected
-                      ? TextField(
-                          decoration: const InputDecoration(
-                            hintText: 'Other Field',
-                            border: OutlineInputBorder(),
+                      ? SizedBox(
+                          width: MediaQuery.sizeOf(context).width,
+                          child: TextField(
+                            maxLines: 2,
+                            decoration: const InputDecoration(
+                              hintText: 'Other Field',
+                              border: OutlineInputBorder(),
+                            ),
+                            controller: _otherFieldController,
                           ),
-                          controller: _otherFieldController,
                         )
                       : const SizedBox(),
                   SizedBox(height: MediaQuery.sizeOf(context).height / 7),
@@ -132,12 +137,28 @@ class _HomeScreenState extends State<HomeScreen> {
     List<String> dataList = [];
     for (int i = 0; i < _tabList.length; i++) {
       if (_tabList[i].isSelected) {
-        dataList.add(_tabList[i].name);
+        dataList.add(_tabList[i].answer);
       }
     }
+
     if (_otherFieldController.text.isNotEmpty &&
-        _otherFieldController.text != null) {
+        _otherFieldController.text != null &&
+        _isOtherTabSelected) {
       dataList.add(_otherFieldController.text);
+    }
+    if (dataList.length < 3) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: const Text('please select minimum 3 tabs'),
+              ),
+            );
+          });
+    } else {
+      // TODO Navigation
     }
     return dataList;
   }
@@ -146,9 +167,11 @@ class _HomeScreenState extends State<HomeScreen> {
 class TabList {
   final String name;
   bool isSelected;
+  final String answer;
 
   TabList({
     required this.name,
     required this.isSelected,
+    required this.answer,
   });
 }
