@@ -1,28 +1,47 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class FirebaseServices {
   final db = FirebaseFirestore.instance;
 
-  void submitExhibitionForm({tabCapturedData}) async {
-    try {
-      await db.collection('ExhibitionForm').add(tabCapturedData).then(
-        (value) {
+  void submitExhibitionForm({
+    exhibitionFormData,
+    String? name,
+    String? contact,
+    String? designation,
+    String? company,
+    context,
+  }) async {
+    Map<String, dynamic> userDataList = {
+      "name": name,
+      "contact": contact,
+      "designation": designation,
+      "company": company,
+    };
+    Map<String, dynamic> exhibitionFormDataList = {
+      "problem": exhibitionFormData,
+      "user detail": userDataList,
+    };
 
-          log('answers : $value $tabCapturedData');
+    try {
+      await db.collection('ExhibitionForm').add(exhibitionFormDataList).then(
+        (value) {
+          log('exhibitionFormData : $value $exhibitionFormData');
         },
       );
-    } catch (e) {
-      log('Exception ${e}');
-    }
-  }
-
-  void submitUserDetails({userDetailsData}) async {
-    try {
-      await db.collection('UserDetailForm').add(userDetailsData).then(
-            (value) => log('userDetail : $value $userDetailsData'),
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: const Text('Exhibition Form Submitted'),
+            ),
           );
+        },
+      );
     } catch (e) {
       log('Exception $e');
     }
