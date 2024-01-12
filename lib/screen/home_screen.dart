@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -65,13 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(
           height: MediaQuery.sizeOf(context).height / 5,
           child: GridView.builder(
-            // physics: const NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: _tabList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _tabList.length,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: 2,
+              childAspectRatio: 2.5,
             ),
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
@@ -110,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Expanded(
                 child: Container(
-                  height: MediaQuery.sizeOf(context).height / 11,
+                  padding: const EdgeInsets.all(16),
                   width: MediaQuery.sizeOf(context).width / 4,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
@@ -146,92 +145,98 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildUserDetailForm(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        title: const Text('User Detail'),
-        children: [
-          Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      autofocus: true,
-                      textInputAction: TextInputAction.next,
-                      controller: _nameController,
-                      keyboardType: TextInputType.name,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter name ',
-                        border: OutlineInputBorder(),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 28.0),
+        child: ExpansionTile(
+          title: const Text('User Detail'),
+          children: [
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        autofocus: true,
+                        textInputAction: TextInputAction.next,
+                        controller: _nameController,
+                        keyboardType: TextInputType.name,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter name ',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: MediaQuery.sizeOf(context).width / 50),
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.phone,
-                      textInputAction: TextInputAction.next,
-                      controller: _contactNoController,
-                      // maxLength: 10,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(10),
-                      ],
-                      decoration: const InputDecoration(
-                        hintText: 'Enter Phone Number ',
-                        border: OutlineInputBorder(),
+                    SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+                    Expanded(
+                      child: TextField(
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                        controller: _contactNoController,
+                        // maxLength: 10,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        decoration: const InputDecoration(
+                          hintText: 'Enter Phone Number ',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: MediaQuery.sizeOf(context).height / 50),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.name,
-                      controller: _designationController,
-                      decoration: const InputDecoration(
-                        hintText: 'Designation',
-                        border: OutlineInputBorder(),
+                  ],
+                ),
+                SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.name,
+                        controller: _designationController,
+                        decoration: const InputDecoration(
+                          hintText: 'Designation',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: MediaQuery.sizeOf(context).width / 50),
-                  Expanded(
-                    child: TextField(
-                      controller: _companyController,
-                      keyboardType: TextInputType.name,
-                      decoration: const InputDecoration(
-                        hintText: 'Company',
-                        border: OutlineInputBorder(),
+                    SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+                    Expanded(
+                      child: TextField(
+                        controller: _companyController,
+                        keyboardType: TextInputType.name,
+                        decoration: const InputDecoration(
+                          hintText: 'Company',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: MediaQuery.sizeOf(context).height / 50),
-            ],
-          ),
-        ],
+                  ],
+                ),
+                SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSubmitButton(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(bottom: 25),
-      width: MediaQuery.sizeOf(context).width / 4,
-      height: MediaQuery.sizeOf(context).height / 9,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-        onPressed: () {
-          _submitUserSelectedData();
-        },
-        child: const Text(
-          'Submit',
-          style: TextStyle(color: Colors.white),
+    return Padding(
+      padding: const EdgeInsets.only(top: 38.0),
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 25),
+        width: MediaQuery.sizeOf(context).width / 4,
+        height: MediaQuery.sizeOf(context).height / 9,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+          onPressed: () {
+            _submitUserSelectedData();
+          },
+          child: const Text(
+            'Submit',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
@@ -251,14 +256,13 @@ class _HomeScreenState extends State<HomeScreen> {
       exhibitionData.add(_otherFieldController.text);
     }
     if (exhibitionData.length < 3) {
+      setState(() {});
       showDialog(
         context: context,
         builder: (context) {
-          return Dialog(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              child: const Text('please select minimum 3 tabs'),
-            ),
+          return _dialogWidget(
+            text: 'Please select minimum 3 tabs ',
+            context: context,
           );
         },
       );
@@ -266,14 +270,13 @@ class _HomeScreenState extends State<HomeScreen> {
         _contactNoController.text.isEmpty ||
         _designationController.text.isEmpty ||
         _companyController.text.isEmpty) {
+      setState(() {});
       showDialog(
         context: context,
         builder: (context) {
-          return Dialog(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              child: const Text('Please Fill all The Fields'),
-            ),
+          return _dialogWidget(
+            text: 'Please fill all the fields',
+            context: context,
           );
         },
       );
@@ -288,6 +291,22 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       _resetData();
     }
+  }
+
+  Dialog _dialogWidget({required String text, required BuildContext context}) {
+    return Dialog(
+      backgroundColor: Colors.red.shade500,
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height / 8,
+        width: MediaQuery.sizeOf(context).width / 4,
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontSize: 18),
+          ),
+        ),
+      ),
+    );
   }
 }
 
