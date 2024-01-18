@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../services/firebase_services.dart';
+import '../services/api_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -306,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
       );
     } else {
-      FirebaseServices().submitExhibitionForm(
+      ApiServices().submitExhibitionForm(
         exhibitionFormData: exhibitionData,
         name: _nameController.text,
         contact: _contactNoController.text,
