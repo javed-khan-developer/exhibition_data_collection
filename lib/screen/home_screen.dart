@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:bot_toast/bot_toast.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,16 +17,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isOtherTabSelected = false;
   final List<TabList> _tabList = [
-    TabList(isSelected: false, answer: 'ans 2'),
     TabList(isSelected: false, answer: 'ans 1'),
+    TabList(isSelected: false, answer: 'ans 2'),
     TabList(isSelected: false, answer: 'ans 3'),
     TabList(isSelected: false, answer: 'ans 4'),
+    TabList(isSelected: false, answer: 'ans 5'),
+    TabList(isSelected: false, answer: 'ans 6'),
+    TabList(isSelected: false, answer: 'ans 7'),
+    TabList(isSelected: false, answer: 'ans 8'),
   ];
   final TextEditingController _otherFieldController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _contactNoController = TextEditingController();
   final TextEditingController _designationController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   _resetData() {
     _companyController.clear();
@@ -30,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _otherFieldController.clear();
     _nameController.clear();
     _contactNoController.clear();
+    _emailController.clear();
     for (int i = 0; i < _tabList.length; i++) {
       if (_tabList[i].isSelected) {
         _tabList[i].isSelected = false;
@@ -42,38 +52,40 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 50),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              _buildTabs(context),
-              _buildUserDetailForm(context),
-              _buildSubmitButton(context),
-            ],
+      body: OrientationBuilder(builder: (context, orientation) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 50),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                _buildTabs(context, orientation),
+                _buildUserDetailForm(context),
+                _buildSubmitButton(context, orientation),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
-  Widget _buildTabs(BuildContext context) {
+  Widget _buildTabs(BuildContext context, Orientation orientation) {
     return Column(
       children: [
         SizedBox(
-          height: MediaQuery.sizeOf(context).height / 5,
+          height: orientation == Orientation.landscape ? 210 : 200,
           child: GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
             itemCount: _tabList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _tabList.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               childAspectRatio: 2.5,
             ),
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
+
                 onTap: () {
                   setState(() {});
                   if (_tabList[index].isSelected) {
@@ -99,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
-        SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+        SizedBox(height: MediaQuery.of(context).size.height / 50),
         Row(
           children: [
             InkWell(
@@ -130,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: TextField(
                       decoration: const InputDecoration(
                         hintText: 'Other Field',
+                        labelText: 'Other',
                         border: OutlineInputBorder(),
                       ),
                       controller: _otherFieldController,
@@ -138,99 +151,118 @@ class _HomeScreenState extends State<HomeScreen> {
                 : const SizedBox(),
           ],
         ),
+        const SizedBox(height: 30),
       ],
     );
   }
 
   Widget _buildUserDetailForm(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 28.0),
-        child: ExpansionTile(
-          title: const Text('User Detail'),
+    return Column(
+      children: [
+        const SizedBox(height: 5),
+        Row(
           children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        autofocus: true,
-                        textInputAction: TextInputAction.next,
-                        controller: _nameController,
-                        keyboardType: TextInputType.name,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter name ',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: MediaQuery.sizeOf(context).width / 50),
-                    Expanded(
-                      child: TextField(
-                        keyboardType: TextInputType.phone,
-                        textInputAction: TextInputAction.next,
-                        controller: _contactNoController,
-                        // maxLength: 10,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        decoration: const InputDecoration(
-                          hintText: 'Enter Phone Number ',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                  ],
+            Expanded(
+              child: TextField(
+                textInputAction: TextInputAction.next,
+                controller: _nameController,
+                keyboardType: TextInputType.name,
+                decoration: const InputDecoration(
+                  hintText: 'Enter name ',
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(height: MediaQuery.sizeOf(context).height / 50),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.name,
-                        controller: _designationController,
-                        decoration: const InputDecoration(
-                          hintText: 'Designation',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: MediaQuery.sizeOf(context).width / 50),
-                    Expanded(
-                      child: TextField(
-                        controller: _companyController,
-                        keyboardType: TextInputType.name,
-                        decoration: const InputDecoration(
-                          hintText: 'Company',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                  ],
+              ),
+            ),
+            SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+            Expanded(
+              child: TextField(
+                keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
+                controller: _contactNoController,
+                // maxLength: 10,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
+                decoration: const InputDecoration(
+                  hintText: 'Enter Phone Number ',
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(height: MediaQuery.sizeOf(context).height / 50),
-              ],
+              ),
             ),
           ],
         ),
-      ),
+        SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                textInputAction: TextInputAction.next,
+                keyboardType: TextInputType.name,
+                controller: _designationController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Designation',
+                  labelText: 'Designation',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+            Expanded(
+              child: TextField(
+                textInputAction: TextInputAction.next,
+                controller: _companyController,
+                keyboardType: TextInputType.name,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Company',
+                  labelText: 'Company',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.emailAddress,
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Email',
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+            const Spacer()
+          ],
+        ),
+      ],
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context) {
+  Widget _buildSubmitButton(BuildContext context, Orientation orientation) {
     return Padding(
       padding: const EdgeInsets.only(top: 38.0),
       child: Container(
         padding: const EdgeInsets.only(bottom: 25),
         width: MediaQuery.sizeOf(context).width / 4,
-        height: MediaQuery.sizeOf(context).height / 9,
+        height: orientation == Orientation.landscape ? 90 : 90,
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange, elevation: 0),
           onPressed: () {
+            _sendWhatsappMessage(
+              headerText: 'headerText',
+              bodyText: 'bodyText',
+              phoneNumber: _contactNoController.text,
+            );
             _submitUserSelectedData();
           },
           child: const Text(
@@ -255,30 +287,26 @@ class _HomeScreenState extends State<HomeScreen> {
         _isOtherTabSelected) {
       exhibitionData.add(_otherFieldController.text);
     }
-    if (exhibitionData.length < 3) {
+    if (exhibitionData.isEmpty) {
       setState(() {});
-      showDialog(
+      _dialogWidget(
+        text: 'Please select minimum 1 tab',
         context: context,
-        builder: (context) {
-          return _dialogWidget(
-            text: 'Please select minimum 3 tabs ',
-            context: context,
-          );
-        },
       );
     } else if (_nameController.text.isEmpty ||
         _contactNoController.text.isEmpty ||
         _designationController.text.isEmpty ||
-        _companyController.text.isEmpty) {
+        _companyController.text.isEmpty ||
+        _emailController.text.isEmpty) {
       setState(() {});
-      showDialog(
+      _dialogWidget(
+        text: 'Please fill all the fields',
         context: context,
-        builder: (context) {
-          return _dialogWidget(
-            text: 'Please fill all the fields',
-            context: context,
-          );
-        },
+      );
+    } else if (_contactNoController.text.length != 10) {
+      _dialogWidget(
+        text: 'Phone number should be of 10 digit',
+        context: context,
       );
     } else {
       FirebaseServices().submitExhibitionForm(
@@ -293,19 +321,59 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Dialog _dialogWidget({required String text, required BuildContext context}) {
-    return Dialog(
-      backgroundColor: Colors.red.shade500,
-      child: SizedBox(
-        height: MediaQuery.sizeOf(context).height / 8,
-        width: MediaQuery.sizeOf(context).width / 4,
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(color: Colors.white, fontSize: 18),
-          ),
+  Future<void> _sendWhatsappMessage({
+    required String headerText,
+    required String bodyText,
+    required String? phoneNumber,
+  }) async {
+    final dio = Dio();
+    String token =
+        "EAADYkutjnqUBOxVgkKNbhSu1mhJPyzqwAm2RDWjF5WQ7fOkgjFINJ5lOkfsMFg0myYZB5mieDSbSis0Q2XgIbZB635gKqN9A5Ie8SqxcoB7t82D3QjLfytJrGKsSBNIAXIW3FZBXvjRdB1wdtPZBv6S0rEyxb0rspwcFwMeBTAkeRxaAlR1nZCjzAKeMxcKNiqCgLpcSf2wtkXpp64iAZD";
+
+    try {
+      final response = await dio.post(
+        'https://graph.facebook.com/v18.0/218006251391820/messages',
+        data: {
+          "messaging_product": "whatsapp",
+          "recipient_type": "individual",
+          "to": '91$phoneNumber',
+          "type": "template",
+          "template": {
+            "name": "exhibition_app",
+            "language": {"code": "en_US"},
+            "components": [
+              {
+                "type": "header",
+                "parameters": [
+                  {"type": "text", "text": headerText}
+                ]
+              },
+              {
+                "type": "body",
+                "parameters": [
+                  {"type": "text", "text": bodyText}
+                ]
+              }
+            ]
+          }
+        },
+        options: Options(
+          headers: {"authorization": "Bearer $token"},
         ),
-      ),
+      );
+      debugPrint('response : ${response.data}');
+    } catch (e) {
+      debugPrint('catch : $e');
+    }
+  }
+
+  _dialogWidget({
+    required String text,
+    required BuildContext context,
+  }) {
+    return BotToast.showText(
+      text: text,
+      align: Alignment.center,
     );
   }
 }

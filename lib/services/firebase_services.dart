@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -28,20 +29,11 @@ class FirebaseServices {
     try {
       await db.collection('ExhibitionForm').add(exhibitionFormDataList).then(
         (value) {
-          log('exhibitionFormData : $value $exhibitionFormData');
+          debugPrint('exhibitionFormData : $value $exhibitionFormData');
         },
       );
-      showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              child: const Text('Exhibition Form Submitted'),
-            ),
-          );
-        },
-      );
+
+      BotToast.showText(text: 'Thank you for visiting us!');
     } catch (e) {
       log('Exception $e');
     }
