@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../services/firebase_services.dart';
 
@@ -17,7 +16,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isOtherTabSelected = false;
   final List<TabList> _tabList = [
-    TabList(isSelected: false, answer: 'ans 1'),
+    TabList(
+        isSelected: false,
+        answer:
+            'ans 1 is a large text need to check if the text is too large is text is visible ans 1 is a large text need to check '),
     TabList(isSelected: false, answer: 'ans 2'),
     TabList(isSelected: false, answer: 'ans 3'),
     TabList(isSelected: false, answer: 'ans 4'),
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 50),
+          padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -73,45 +75,45 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTabs(BuildContext context, Orientation orientation) {
     return Column(
       children: [
-        SizedBox(
-          height: orientation == Orientation.landscape ? 210 : 200,
-          child: GridView.builder(
-            itemCount: _tabList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 2.5,
-            ),
-            itemBuilder: (BuildContext context, int index) {
+        Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: [
+            ..._tabList.map<Widget>((element) {
               return InkWell(
-
                 onTap: () {
                   setState(() {});
-                  if (_tabList[index].isSelected) {
-                    _tabList[index].isSelected = false;
+                  if (element.isSelected) {
+                    element.isSelected = false;
                   } else {
-                    _tabList[index].isSelected = true;
+                    element.isSelected = true;
                   }
                 },
                 child: Container(
+                  width: 100.w,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color:
-                        _tabList[index].isSelected ? Colors.green : Colors.grey,
+                    color: element.isSelected ? Colors.green : Colors.blueGrey,
                   ),
                   child: Center(
-                    child: Text(
-                      _tabList[index].answer,
-                      style: const TextStyle(color: Colors.white),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.sp, vertical: 8.sp),
+                      child: Text(
+                        element.answer,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               );
-            },
-          ),
+            }).toList(),
+          ],
         ),
-        SizedBox(height: MediaQuery.of(context).size.height / 50),
+        SizedBox(height: 10.h),
         Row(
           children: [
             InkWell(
@@ -121,22 +123,21 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(16),
-                  width: MediaQuery.sizeOf(context).width / 4,
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: _isOtherTabSelected ? Colors.green : Colors.grey,
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       'Other',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+            SizedBox(width: 10.w),
             _isOtherTabSelected
                 ? Expanded(
                     child: TextField(
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : const SizedBox(),
           ],
         ),
-        const SizedBox(height: 30),
+        SizedBox(height: 20.h),
       ],
     );
   }
@@ -159,7 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildUserDetailForm(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 5),
         Row(
           children: [
             Expanded(
@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+            SizedBox(width: 20.w),
             Expanded(
               child: TextField(
                 keyboardType: TextInputType.phone,
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+        SizedBox(height: 20.h),
         Row(
           children: [
             Expanded(
@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+            SizedBox(width: 20.w),
             Expanded(
               child: TextField(
                 textInputAction: TextInputAction.next,
@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+        SizedBox(height: 20.h),
         Row(
           children: [
             Expanded(
@@ -239,36 +239,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(width: MediaQuery.sizeOf(context).width / 50),
+            SizedBox(width: 20.w),
             const Spacer()
           ],
         ),
+        SizedBox(height: 30.h),
       ],
     );
   }
 
   Widget _buildSubmitButton(BuildContext context, Orientation orientation) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 38.0),
-      child: Container(
-        padding: const EdgeInsets.only(bottom: 25),
-        width: MediaQuery.sizeOf(context).width / 4,
-        height: orientation == Orientation.landscape ? 90 : 90,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange, elevation: 0),
-          onPressed: () {
-            _sendWhatsappMessage(
-              headerText: 'headerText',
-              bodyText: 'bodyText',
-              phoneNumber: _contactNoController.text,
-            );
-            _submitUserSelectedData();
-          },
-          child: const Text(
-            'Submit',
-            style: TextStyle(color: Colors.white),
-          ),
+    return SizedBox(
+      width: 150.w,
+      height: orientation == Orientation.landscape ? 50.h : 50.h,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange, elevation: 0),
+        onPressed: () {
+          _sendWhatsappMessage(
+            headerText: 'headerText',
+            bodyText: 'bodyText',
+            phoneNumber: _contactNoController.text,
+          );
+          _submitUserSelectedData();
+        },
+        child: Text(
+          'Submit',
+          style: TextStyle(color: Colors.white, fontSize: 15.sp),
         ),
       ),
     );
