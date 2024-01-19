@@ -1,5 +1,4 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,11 +14,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isOtherTabSelected = false;
+  bool _isLoading = false;
   final List<TabList> _tabList = [
     TabList(
         isSelected: false,
         answer:
-            'ans 1 is a large text need to check if the text is too large is text is visible ans 1 is a large text need to check '),
+            'ans 1 is a large text need to check if the text is too large is text is visible ans 1 is a large text need to check ans 1 is a large text need to check if the text is too large is text is'),
     TabList(isSelected: false, answer: 'ans 2'),
     TabList(isSelected: false, answer: 'ans 3'),
     TabList(isSelected: false, answer: 'ans 4'),
@@ -54,225 +54,264 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: OrientationBuilder(builder: (context, orientation) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-                _buildTabs(context, orientation),
-                _buildUserDetailForm(context),
-                _buildSubmitButton(context, orientation),
-              ],
-            ),
-          ),
+      body: OrientationBuilder(builder: (
+        context,
+        orientation,
+      ) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: !_isLoading
+              ? Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.sp, vertical: 16.sp),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        child: Wrap(
+                          spacing: 16,
+                          runSpacing: 16,
+                          children: [
+                            ..._tabList.map<Widget>((element) {
+                              return InkWell(
+                                onTap: () {
+                                  setState(() {});
+                                  if (element.isSelected) {
+                                    element.isSelected = false;
+                                  } else {
+                                    element.isSelected = true;
+                                  }
+                                },
+                                child: Container(
+                                  height: orientation == Orientation.landscape
+                                      ? 120.h
+                                      : 80.h,
+                                  width: orientation == Orientation.landscape
+                                      ? 165.w
+                                      : 163.w,
+                                  decoration: element.isSelected
+                                      ? BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: Colors.green,
+                                        )
+                                      : BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.black)),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8.sp, vertical: 8.sp),
+                                      child: Text(
+                                        element.answer,
+                                        style: TextStyle(
+                                          color: element.isSelected
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: orientation ==
+                                                  Orientation.landscape
+                                              ? 4.7.sp
+                                              : 7.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {});
+                              _isOtherTabSelected = !_isOtherTabSelected;
+                            },
+                            child: Expanded(
+                              child: Container(
+                                height: orientation == Orientation.landscape
+                                    ? 75.h
+                                    : 40.h,
+                                width: orientation == Orientation.landscape
+                                    ? 60.w
+                                    : 80.w,
+                                decoration: _isOtherTabSelected
+                                    ? BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.green,
+                                      )
+                                    : BoxDecoration(
+                                        border:
+                                            Border.all(color: Colors.black)),
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8.sp, vertical: 8.sp),
+                                    child: Text(
+                                      'Other',
+                                      style: TextStyle(
+                                        color: _isOtherTabSelected
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontSize:
+                                            orientation == Orientation.landscape
+                                                ? 4.7.sp
+                                                : 7.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10.w),
+                          _isOtherTabSelected
+                              ? Expanded(
+                                  child: TextField(
+                                    decoration: const InputDecoration(
+                                      hintText: 'Other Field',
+                                      labelText: 'Other',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    controller: _otherFieldController,
+                                  ),
+                                )
+                              : const SizedBox(),
+                        ],
+                      ),
+                      SizedBox(height: 20.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              textInputAction: TextInputAction.next,
+                              controller: _nameController,
+                              keyboardType: TextInputType.name,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter name ',
+                                labelText: 'Name',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          Expanded(
+                            child: TextField(
+                              keyboardType: TextInputType.phone,
+                              textInputAction: TextInputAction.next,
+                              controller: _contactNoController,
+                              // maxLength: 10,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              decoration: const InputDecoration(
+                                hintText: 'Enter Phone Number ',
+                                labelText: 'Phone Number',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.name,
+                              controller: _designationController,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter Designation',
+                                labelText: 'Designation',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          Expanded(
+                            child: TextField(
+                              textInputAction: TextInputAction.next,
+                              controller: _companyController,
+                              keyboardType: TextInputType.name,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter Company',
+                                labelText: 'Company',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              textInputAction: TextInputAction.done,
+                              keyboardType: TextInputType.emailAddress,
+                              controller: _emailController,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter Email',
+                                labelText: 'Email',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          const Spacer()
+                        ],
+                      ),
+                      SizedBox(height: 30.h),
+                      SizedBox(
+                        height:
+                            orientation == Orientation.landscape ? 40.h : 40.h,
+                        width: orientation == Orientation.landscape
+                            ? 100.w
+                            : 100.w,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange, elevation: 0),
+                          onPressed: () {
+                            _submitUserSelectedData();
+                          },
+                          child: Text(
+                            'Submit',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: orientation == Orientation.landscape
+                                  ? 4.7.sp
+                                  : 7.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 30.h),
+                    ],
+                  ),
+                )
+              : const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
         );
       }),
     );
   }
 
-  Widget _buildTabs(BuildContext context, Orientation orientation) {
-    return Column(
-      children: [
-        Wrap(
-          spacing: 16,
-          runSpacing: 16,
-          children: [
-            ..._tabList.map<Widget>((element) {
-              return InkWell(
-                onTap: () {
-                  setState(() {});
-                  if (element.isSelected) {
-                    element.isSelected = false;
-                  } else {
-                    element.isSelected = true;
-                  }
-                },
-                child: Container(
-                  width: 100.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: element.isSelected ? Colors.green : Colors.blueGrey,
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 8.sp, vertical: 8.sp),
-                      child: Text(
-                        element.answer,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-        SizedBox(height: 10.h),
-        Row(
-          children: [
-            InkWell(
-              onTap: () {
-                setState(() {});
-                _isOtherTabSelected = !_isOtherTabSelected;
-              },
-              child: Expanded(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: _isOtherTabSelected ? Colors.green : Colors.grey,
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Other',
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 10.w),
-            _isOtherTabSelected
-                ? Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Other Field',
-                        labelText: 'Other',
-                        border: OutlineInputBorder(),
-                      ),
-                      controller: _otherFieldController,
-                    ),
-                  )
-                : const SizedBox(),
-          ],
-        ),
-        SizedBox(height: 20.h),
-      ],
-    );
-  }
-
-  Widget _buildUserDetailForm(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                controller: _nameController,
-                keyboardType: TextInputType.name,
-                decoration: const InputDecoration(
-                  hintText: 'Enter name ',
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            SizedBox(width: 20.w),
-            Expanded(
-              child: TextField(
-                keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.next,
-                controller: _contactNoController,
-                // maxLength: 10,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(10),
-                ],
-                decoration: const InputDecoration(
-                  hintText: 'Enter Phone Number ',
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20.h),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.name,
-                controller: _designationController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter Designation',
-                  labelText: 'Designation',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            SizedBox(width: 20.w),
-            Expanded(
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                controller: _companyController,
-                keyboardType: TextInputType.name,
-                decoration: const InputDecoration(
-                  hintText: 'Enter Company',
-                  labelText: 'Company',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20.h),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.emailAddress,
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter Email',
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            SizedBox(width: 20.w),
-            const Spacer()
-          ],
-        ),
-        SizedBox(height: 30.h),
-      ],
-    );
-  }
-
-  Widget _buildSubmitButton(BuildContext context, Orientation orientation) {
-    return SizedBox(
-      width: 150.w,
-      height: orientation == Orientation.landscape ? 50.h : 50.h,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange, elevation: 0),
-        onPressed: () {
-          _sendWhatsappMessage(
-            headerText: 'headerText',
-            bodyText: 'bodyText',
-            phoneNumber: _contactNoController.text,
-          );
-          _submitUserSelectedData();
-        },
-        child: Text(
-          'Submit',
-          style: TextStyle(color: Colors.white, fontSize: 15.sp),
-        ),
-      ),
-    );
-  }
-
   _submitUserSelectedData() {
-    List exhibitionData = [];
+    const pattern = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
+        r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
+        r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
+        r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
+        r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
+        r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
+        r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
+    final regex = RegExp(pattern);
+    List<String> exhibitionData = [];
     for (int i = 0; i < _tabList.length; i++) {
       if (_tabList[i].isSelected) {
         exhibitionData.add(_tabList[i].answer);
@@ -291,76 +330,37 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
       );
     } else if (_nameController.text.isEmpty ||
-        _contactNoController.text.isEmpty ||
-        _designationController.text.isEmpty ||
-        _companyController.text.isEmpty ||
-        _emailController.text.isEmpty) {
+        _companyController.text.isEmpty) {
       setState(() {});
       _dialogWidget(
         text: 'Please fill all the fields',
         context: context,
       );
-    } else if (_contactNoController.text.length != 10) {
+    } else if (_contactNoController.text.isNotEmpty &&
+        _contactNoController.text.length != 10) {
       _dialogWidget(
         text: 'Phone number should be of 10 digit',
         context: context,
       );
+    } else if (_emailController.text.isNotEmpty &&
+        !regex.hasMatch(_emailController.text)) {
+      _dialogWidget(
+        text: 'Phone enter a valid email address',
+        context: context,
+      );
     } else {
+      _isLoading = true;
       ApiServices().submitExhibitionForm(
         exhibitionFormData: exhibitionData,
         name: _nameController.text,
         contact: _contactNoController.text,
         designation: _designationController.text,
         company: _companyController.text,
+        email: _emailController.text,
         context: context,
       );
       _resetData();
-    }
-  }
-
-  Future<void> _sendWhatsappMessage({
-    required String headerText,
-    required String bodyText,
-    required String? phoneNumber,
-  }) async {
-    final dio = Dio();
-    String token =
-        "EAADYkutjnqUBOxVgkKNbhSu1mhJPyzqwAm2RDWjF5WQ7fOkgjFINJ5lOkfsMFg0myYZB5mieDSbSis0Q2XgIbZB635gKqN9A5Ie8SqxcoB7t82D3QjLfytJrGKsSBNIAXIW3FZBXvjRdB1wdtPZBv6S0rEyxb0rspwcFwMeBTAkeRxaAlR1nZCjzAKeMxcKNiqCgLpcSf2wtkXpp64iAZD";
-
-    try {
-      final response = await dio.post(
-        'https://graph.facebook.com/v18.0/218006251391820/messages',
-        data: {
-          "messaging_product": "whatsapp",
-          "recipient_type": "individual",
-          "to": '91$phoneNumber',
-          "type": "template",
-          "template": {
-            "name": "exhibition_app",
-            "language": {"code": "en_US"},
-            "components": [
-              {
-                "type": "header",
-                "parameters": [
-                  {"type": "text", "text": headerText}
-                ]
-              },
-              {
-                "type": "body",
-                "parameters": [
-                  {"type": "text", "text": bodyText}
-                ]
-              }
-            ]
-          }
-        },
-        options: Options(
-          headers: {"authorization": "Bearer $token"},
-        ),
-      );
-      debugPrint('response : ${response.data}');
-    } catch (e) {
-      debugPrint('catch : $e');
+      _isLoading = false;
     }
   }
 
@@ -371,6 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return BotToast.showText(
       text: text,
       align: Alignment.center,
+      duration: const Duration(seconds: 2),
     );
   }
 }
