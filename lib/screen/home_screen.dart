@@ -16,14 +16,14 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isOtherTabSelected = false;
   bool _isLoading = false;
   final List<TabList> _tabList = [
-    TabList(isSelected: false,answer: 'Any challeneges managing employee attendance.'),
-    TabList(isSelected: false, answer: 'Any challenges in Managing the quaility of work carried out in your facility.'),
-    TabList(isSelected: false, answer: 'Any challenges in tracking requests from Employees.'),
-    TabList(isSelected: false, answer: 'Any challenge in managing your company assests?'),
+    TabList(isSelected: false,answer: 'To manage employee attendance.'),
+    TabList(isSelected: false, answer: 'To manage the quaility of work carried out in your facility.'),
+    TabList(isSelected: false, answer: 'To  track requests from employees.'),
+    TabList(isSelected: false, answer: 'To manage your company assests?'),
     TabList(isSelected: false, answer: 'Is there any assistance needed to digitize your cafeteria?'),
-    TabList(isSelected: false, answer: 'Any Challenge to Mange your daily consumption.'),
-    TabList(isSelected: false, answer: 'Worried how to manage your Human resources.'),
-    TabList(isSelected: false, answer: 'Manage your day to day project resouces.'),
+    TabList(isSelected: false, answer: 'To mange your daily consumption.'),
+    TabList(isSelected: false, answer: 'To manage your human resources.'),
+    TabList(isSelected: false, answer: 'To manage your day to day project resouces.'),
   ];
   final TextEditingController _otherFieldController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -51,96 +51,60 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(title: const Text("Challenges",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500),), centerTitle: true,),
       body: OrientationBuilder(builder: (
         context,
         orientation,
       ) {
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: !_isLoading
-              ? Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.sp, vertical: 16.sp),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        child: Wrap(
-                          spacing: 16,
-                          runSpacing: 16,
-                          children: [
-                            ..._tabList.map<Widget>((element) {
-                              return InkWell(
-                                onTap: () {
-                                  setState(() {});
-                                  if (element.isSelected) {
-                                    element.isSelected = false;
-                                  } else {
-                                    element.isSelected = true;
-                                  }
-                                },
-                                child: Container(
-                                  height: orientation == Orientation.landscape
-                                      ? 120.h
-                                      : 80.h,
-                                  width: orientation == Orientation.landscape
-                                      ? 165.w
-                                      : 163.w,
-                                  decoration: element.isSelected
-                                      ? BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          color: Colors.green,
-                                        )
-                                      : BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black)),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8.sp, vertical: 8.sp),
-                                      child: Text(
-                                        element.answer,
-                                        style: TextStyle(
-                                          color: element.isSelected
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: orientation ==
-                                                  Orientation.landscape
-                                              ? 4.7.sp
-                                              : 7.sp,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                      Row(
+        return
+             Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
+                child: Column(
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Row(
+                      children: [
+                        Image.asset("assets/logo.png",width: MediaQuery.of(context).size.width*0.22,),
+                        SizedBox(width: MediaQuery.of(context).size.width*0.15,),
+                         Text("Challenges",style: TextStyle(fontSize: 15.sp,fontWeight: FontWeight.w600),),
+                      ],
+                    ),
+                  ),
+
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width,
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 12,
                         children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {});
-                              _isOtherTabSelected = !_isOtherTabSelected;
-                            },
-                            child: Expanded(
+                          ..._tabList.map<Widget>((element) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {});
+                                if (element.isSelected) {
+                                  element.isSelected = false;
+                                } else {
+                                  element.isSelected = true;
+                                }
+                              },
                               child: Container(
                                 height: orientation == Orientation.landscape
-                                    ? 75.h
-                                    : 40.h,
+                                    ? 120.h
+                                    : 70.h,
                                 width: orientation == Orientation.landscape
-                                    ? 60.w
-                                    : 80.w,
-                                decoration: _isOtherTabSelected
+                                    ? 165.w
+                                    : 163.w,
+                                decoration: element.isSelected
                                     ? BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius:
+                                            BorderRadius.circular(20),
                                         color: Colors.green,
                                       )
                                     : BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(20),
                                         border:
                                             Border.all(color: Colors.black)),
                                 child: Center(
@@ -148,153 +112,200 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 8.sp, vertical: 8.sp),
                                     child: Text(
-                                      'Other',
+                                      element.answer,
                                       style: TextStyle(
-                                        color: _isOtherTabSelected
+                                        color: element.isSelected
                                             ? Colors.white
                                             : Colors.black,
-                                        fontSize:
-                                            orientation == Orientation.landscape
-                                                ? 4.7.sp
-                                                : 7.sp,
+                                        fontSize: orientation ==
+                                                Orientation.landscape
+                                            ? 4.7.sp
+                                            : MediaQuery.of(context).size.height*0.014,
                                       ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {});
+                            _isOtherTabSelected = !_isOtherTabSelected;
+                          },
+                          child: Expanded(
+                            child: Container(
+                              height: orientation == Orientation.landscape
+                                  ? 75.h
+                                  : 40.h,
+                              width: orientation == Orientation.landscape
+                                  ? 60.w
+                                  : 50.w,
+                              decoration: _isOtherTabSelected
+                                  ? BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.green,
+                                    )
+                                  : BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(20),
+                                      border:
+                                          Border.all(color: Colors.black)),
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.sp, vertical: 8.sp),
+                                  child: Text(
+                                    'Other',
+                                    style: TextStyle(
+                                      color: _isOtherTabSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize:
+                                          orientation == Orientation.landscape
+                                              ? 4.7.sp
+                                              : 7.sp,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 10.w),
-                          _isOtherTabSelected
-                              ? Expanded(
-                                  child: TextField(
-                                    decoration: const InputDecoration(
-                                      hintText: 'Other Field',
-                                      labelText: 'Other',
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    controller: _otherFieldController,
+                        ),
+                        SizedBox(width: 10.w),
+                        _isOtherTabSelected
+                            ? Expanded(
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    hintText: 'Other Field',
+                                    labelText: 'Other',
+                                    border: OutlineInputBorder(),
                                   ),
-                                )
-                              : const SizedBox(),
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              textInputAction: TextInputAction.next,
-                              controller: _nameController,
-                              keyboardType: TextInputType.name,
-                              decoration: const InputDecoration(
-                                hintText: 'Enter name ',
-                                labelText: 'Name',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 20.w),
-                          Expanded(
-                            child: TextField(
-                              keyboardType: TextInputType.phone,
-                              textInputAction: TextInputAction.next,
-                              controller: _contactNoController,
-                              // maxLength: 10,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10),
-                              ],
-                              decoration: const InputDecoration(
-                                hintText: 'Enter Phone Number ',
-                                labelText: 'Phone Number',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.name,
-                              controller: _designationController,
-                              decoration: const InputDecoration(
-                                hintText: 'Enter Designation',
-                                labelText: 'Designation',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 20.w),
-                          Expanded(
-                            child: TextField(
-                              textInputAction: TextInputAction.next,
-                              controller: _companyController,
-                              keyboardType: TextInputType.name,
-                              decoration: const InputDecoration(
-                                hintText: 'Enter Company',
-                                labelText: 'Company',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              textInputAction: TextInputAction.done,
-                              keyboardType: TextInputType.emailAddress,
-                              controller: _emailController,
-                              decoration: const InputDecoration(
-                                hintText: 'Enter Email',
-                                labelText: 'Email',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 20.w),
-                          const Spacer()
-                        ],
-                      ),
-                      SizedBox(height: 30.h),
-                      SizedBox(
-                        height:
-                            orientation == Orientation.landscape ? 40.h : 40.h,
-                        width: orientation == Orientation.landscape
-                            ? 100.w
-                            : 100.w,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange, elevation: 0),
-                          onPressed: () {
-                            _submitUserSelectedData();
-                          },
-                          child: Text(
-                            'Submit',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: orientation == Orientation.landscape
-                                  ? 4.7.sp
-                                  : 7.sp,
+                                  controller: _otherFieldController,
+                                ),
+                              )
+                            : const SizedBox(),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            textInputAction: TextInputAction.next,
+                            controller: _nameController,
+                            keyboardType: TextInputType.name,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter name ',
+                              labelText: 'Name',
+                              border: OutlineInputBorder(),
                             ),
                           ),
                         ),
+                        SizedBox(width: 20.w),
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.phone,
+                            textInputAction: TextInputAction.next,
+                            controller: _contactNoController,
+                            // maxLength: 10,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
+                            decoration: const InputDecoration(
+                              hintText: 'Enter Phone Number ',
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.name,
+                            controller: _designationController,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter Designation',
+                              labelText: 'Designation',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20.w),
+                        Expanded(
+                          child: TextField(
+                            textInputAction: TextInputAction.next,
+                            controller: _companyController,
+                            keyboardType: TextInputType.name,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter Company',
+                              labelText: 'Company',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            textInputAction: TextInputAction.done,
+                            keyboardType: TextInputType.emailAddress,
+                            controller: _emailController,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter Email',
+                              labelText: 'Email',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20.w),
+                        const Spacer()
+                      ],
+                    ),
+                    SizedBox(height: 30.h),
+                    SizedBox(
+                      height:
+                          orientation == Orientation.landscape ? 40.h : 40.h,
+                      width: orientation == Orientation.landscape
+                          ? 100.w
+                          : 100.w,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange, elevation: 0),
+                        onPressed: () {
+                          _submitUserSelectedData();
+                        },
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: orientation == Orientation.landscape
+                                ? 4.7.sp
+                                : 10.sp,
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 30.h),
-                    ],
-                  ),
-                )
-              : const Center(
-                  child: CircularProgressIndicator.adaptive(),
+                    ),
+                    SizedBox(height: 10.h),
+                  ],
                 ),
-        );
+              );
+
       }),
     );
   }
@@ -347,6 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } else {
       _isLoading = true;
+      BotToast.showText(text: 'Thankyou for visiting us');
       ApiServices().submitExhibitionForm(
         exhibitionFormData: exhibitionData,
         name: _nameController.text,

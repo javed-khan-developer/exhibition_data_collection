@@ -36,7 +36,7 @@ class ApiServices {
       debugPrint('response statusCode ${response.statusCode}');
       if (response.statusCode == 200) {
         final exhibitionModel = exhibitionModelFromJson(response.body);
-        BotToast.showText(text: exhibitionModel.message ?? '');
+        // BotToast.showText(text: exhibitionModel.message ?? '');
       } else {
         BotToast.showText(text: 'Something went wrong');
       }
