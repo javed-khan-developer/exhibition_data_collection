@@ -16,17 +16,14 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isOtherTabSelected = false;
   bool _isLoading = false;
   final List<TabList> _tabList = [
-    TabList(
-        isSelected: false,
-        answer:
-            'ans 1 is a large text need to check if the text is too large is text is visible ans 1 is a large text need to check ans 1 is a large text need to check if the text is too large is text is'),
-    TabList(isSelected: false, answer: 'ans 2'),
-    TabList(isSelected: false, answer: 'ans 3'),
-    TabList(isSelected: false, answer: 'ans 4'),
-    TabList(isSelected: false, answer: 'ans 5'),
-    TabList(isSelected: false, answer: 'ans 6'),
-    TabList(isSelected: false, answer: 'ans 7'),
-    TabList(isSelected: false, answer: 'ans 8'),
+    TabList(isSelected: false,answer: 'Any challeneges managing employee attendance.'),
+    TabList(isSelected: false, answer: 'Any challenges in Managing the quaility of work carried out in your facility.'),
+    TabList(isSelected: false, answer: 'Any challenges in tracking requests from Employees.'),
+    TabList(isSelected: false, answer: 'Any challenge in managing your company assests?'),
+    TabList(isSelected: false, answer: 'Is there any assistance needed to digitize your cafeteria?'),
+    TabList(isSelected: false, answer: 'Any Challenge to Mange your daily consumption.'),
+    TabList(isSelected: false, answer: 'Worried how to manage your Human resources.'),
+    TabList(isSelected: false, answer: 'Manage your day to day project resouces.'),
   ];
   final TextEditingController _otherFieldController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
